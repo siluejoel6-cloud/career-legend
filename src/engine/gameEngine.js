@@ -6,6 +6,9 @@ import {
   TEMPLATES_FANS,
   TEMPLATES_HATERS,
   ENFANCES,
+  ADOLESCENCES,
+  ENTOURAGES,
+  NATIONALITES,
   TYPES_BLESSURES,
   TROPHEES_POSSIBLES,
 } from "../data/gameData";
@@ -17,6 +20,9 @@ import { genererPersonnages, genererNomUnique } from "../data/personnages";
 export function createInitialState(profile) {
   const perso = genererPersonnages();
   const enfance = ENFANCES.find((e) => e.id === profile.enfance) ?? ENFANCES[0];
+  const adolescence = ADOLESCENCES.find((a) => a.id === profile.adolescence) ?? ADOLESCENCES[1];
+  const entourage = ENTOURAGES.find((e) => e.id === profile.entourage) ?? ENTOURAGES[0];
+  const nationalite = NATIONALITES.find((n) => n.id === profile.nationalite) ?? NATIONALITES[0];
 
   let s = {
     identite: {
@@ -24,6 +30,7 @@ export function createInitialState(profile) {
       poste: profile.poste,
       personnalite: profile.personnalite,
       club: profile.club,
+      nationalite: nationalite.id,
     },
     age: 16,
     saison: 1,
@@ -38,7 +45,7 @@ export function createInitialState(profile) {
       hateRatio: 10, // % d'avis négatifs dans le feed
     },
     relations: {
-      agent: { nom: perso.agent, confiance: 50 },
+      agent: { nom: perso.agent, confiance: entourage.agentConfianceInit },
       coach: { nom: perso.coach, confiance: 50 },
       rival: { nom: perso.rival, tension: 25, titresRival: 0 },
       coequipiers: [
@@ -63,6 +70,8 @@ export function createInitialState(profile) {
       titres: [],
       statistiquesParSaison: [],
       enfance: enfance.id,
+      adolescence: adolescence.id,
+      entourage: entourage.id,
       reconversion: null,
     },
     feedSocial: [],
@@ -75,6 +84,8 @@ export function createInitialState(profile) {
   };
 
   s = applyEffets(s, enfance.effets);
+  s = applyEffets(s, adolescence.effets);
+  s = applyEffets(s, entourage.effets);
   return s;
 }
 
@@ -312,7 +323,7 @@ export function avancerSaison(state) {
   const statsSaison = genererStatsSaison(s, etaitBlesseCetteSaison, saisonQuiSeTermine);
   s.historique.statistiquesParSaison = [...s.historique.statistiquesParSaison, statsSaison];
 
-  let recap = `Bilan saison ${saisonQuiSeTermine} : ${statsSaison.matchsJoues} matchs, ${statsSaison.buts} but(s), ${statsSaison.passes} passe(s) décisive(s).`;
+  let recap = `Bilan saison ${saisonQuiSeTermine} : ${statsSaison.matchsJoues} matchs, ${statsSaison.buts} but(s), ${statsSaison.passes} passe(s) décisive(s), note moyenne ${statsSaison.note}/10.`;
   const trophee = tirerTrophee(s);
   if (trophee) {
     s.historique.titres = [...s.historique.titres, { nom: trophee, saison: saisonQuiSeTermine }];
@@ -357,12 +368,33 @@ function genererStatsSaison(state, etaitBlesse, saison) {
       break;
   }
 
+  const note = calculerNoteSaison(state, buts, passes, matchsJoues, etaitBlesse);
+
   return {
     saison,
     matchsJoues: etaitBlesse ? Math.min(matchsJoues, 18) : matchsJoues,
     buts: Math.max(0, buts),
     passes: Math.max(0, passes),
+    note,
   };
+}
+
+function calculerNoteSaison(state, buts, passes, matchsJoues, etaitBlesse) {
+  const { technique, mental, forme } = state.stats;
+  const base = 5 + (technique + mental) / 50; // ~5 à ~9 selon le niveau du joueur
+  const bonusProduction = state.identite.poste === "gardien"
+    ? 0
+    : Math.min(1.5, (buts + passes * 0.6) / Math.max(1, matchsJoues) * 3);
+  const malusForme = forme < 50 ? -0.6 : 0;
+  const malusBlessure = etaitBlesse ? -0.4 : 0;
+  const bruit = (Math.random() - 0.5) * 0.6;
+  return Math.max(3, Math.min(9.9, Math.round((base + bonusProduction + malusForme + malusBlessure + bruit) * 10) / 10));
+}
+
+// Retourne les statistiques de la dernière saison jouée (ou null en tout début de carrière)
+export function derniereSaison(state) {
+  const stats = state.historique.statistiquesParSaison;
+  return stats.length > 0 ? stats[stats.length - 1] : null;
 }
 
 function tirerTrophee(state) {
@@ -379,4 +411,33 @@ export function scoreCarriere(state) {
   const bonusTitres = state.historique.titres.length * 5;
   const bonusFamille = state.viePerso.stabilite / 10;
   return Math.round(clamp(base + bonusTitres + bonusFamille, 0, 100));
+}
+
+// ---- Génère une carrière plausible et STABLE pour le rival (comparaison finale) ----
+// Utilise une petite seed déterministe (nom + titres) pour que les chiffres ne
+// changent pas d'un rendu à l'autre au sein d'une même partie terminée.
+function hashString(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
+  return h;
+}
+function mulberry32(seed) {
+  let a = seed;
+  return function () {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+export function genererStatsRivalFinal(state) {
+  const rival = state.relations.rival;
+  const rand = mulberry32(hashString(rival.nom + rival.titresRival + state.saison));
+  const nbSaisons = Math.max(1, state.saison - 1);
+  const ovrMax = Math.min(99, Math.round(52 + rand() * 28 + rival.titresRival * 1.5));
+  const buts = Math.round(nbSaisons * (2 + rand() * 4) + rival.titresRival * 8);
+  const matchs = Math.round(nbSaisons * (20 + rand() * 10));
+  return { nom: rival.nom, ovrMax, buts, matchs, titres: rival.titresRival };
 }

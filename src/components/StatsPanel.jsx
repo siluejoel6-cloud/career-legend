@@ -1,4 +1,4 @@
-import { ENFANCES } from "../data/gameData";
+import { ENFANCES, NATIONALITES } from "../data/gameData";
 
 const BARRES = [
   { key: "technique", label: "Technique", couleur: "var(--pitch-light)" },
@@ -11,6 +11,7 @@ const BARRES = [
 export default function StatsPanel({ state }) {
   const { identite, age, saison, stats, finances, viePerso, blessureActuelle, historique } = state;
   const enfance = ENFANCES.find((e) => e.id === historique?.enfance);
+  const nationalite = NATIONALITES.find((n) => n.id === identite.nationalite);
 
   return (
     <div className="bg-[var(--surface)] border border-[var(--line)] rounded-xl p-5">
@@ -18,7 +19,7 @@ export default function StatsPanel({ state }) {
         <h2 className="font-display text-2xl">{identite.nom}</h2>
         <span className="font-mono text-xs text-[var(--ink-dim)]">S{saison} · {age} ANS</span>
       </div>
-      <p className="text-sm text-[var(--ink-dim)]">{identite.club}</p>
+      <p className="text-sm text-[var(--ink-dim)]">{nationalite?.drapeau} {identite.club}</p>
       {enfance && (
         <p className="text-xs text-[var(--ink-dim)] italic mb-4">{enfance.label}</p>
       )}

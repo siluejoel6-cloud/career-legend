@@ -5,17 +5,17 @@
 // ============================================================
 
 export const POSTES = [
-  { id: "gardien", label: "Gardien" },
-  { id: "defenseur", label: "Défenseur" },
-  { id: "milieu", label: "Milieu de terrain" },
-  { id: "attaquant", label: "Attaquant" },
+  { id: "gardien", label: "Gardien", description: "Seul face à tous. Un poste ingrat où une carrière se joue sur des réflexes et des nerfs d'acier." },
+  { id: "defenseur", label: "Défenseur", description: "L'art de l'ombre. Peu de gloire statistique, mais les grandes équipes se construisent derrière." },
+  { id: "milieu", label: "Milieu de terrain", description: "Le chef d'orchestre. Moins de buts, plus de contrôle : c'est toi qui donnes le tempo du jeu." },
+  { id: "attaquant", label: "Attaquant", description: "Vivre et mourir pour le but. Les statistiques qui font les légendes... et les critiques quand elles se tarissent." },
 ];
 
 export const PERSONNALITES = [
-  { id: "humble", label: "Humble et travailleur", effets: { mental: 5, reputation: 2 } },
-  { id: "charismatique", label: "Charismatique et médiatique", effets: { followers: 500, reputation: 5 } },
-  { id: "discret", label: "Discret et introverti", effets: { stabilite: 5, followers: -200 } },
-  { id: "provocateur", label: "Provocateur, aime la polémique", effets: { followers: 800, hateRatio: 10 } },
+  { id: "humble", label: "Humble et travailleur", description: "Tu laisses parler le travail plus que les mots. Respecté, rarement sous les projecteurs.", effets: { mental: 5, reputation: 2 } },
+  { id: "charismatique", label: "Charismatique et médiatique", description: "Tu attires la lumière naturellement. Les caméras t'aiment, et ça se voit.", effets: { followers: 500, reputation: 5 } },
+  { id: "discret", label: "Discret et introverti", description: "Le terrain te suffit. Peu de bruit autour de toi, mais une vraie profondeur.", effets: { stabilite: 5, followers: -200 } },
+  { id: "provocateur", label: "Provocateur, aime la polémique", description: "Chaque déclaration fait des vagues. Adoré, détesté, jamais ignoré.", effets: { followers: 800, hateRatio: 10 } },
 ];
 
 export const CLUBS_DEPART = [
@@ -26,6 +26,24 @@ export const CLUBS_DEPART = [
 export const GRANDS_CLUBS = [
   "Athletic Royale (Espagne)", "FC Lombardia (Italie)", "Albion United (Angleterre)",
   "Rheingold FC (Allemagne)", "Olympia Marseille (France)", "Al Khalij SC (Golfe)",
+];
+
+// ---- Nationalité : le pays qui te verra grandir sur les terrains ----
+export const NATIONALITES = [
+  { id: "ci", label: "Côte d'Ivoire", drapeau: "🇨🇮" },
+  { id: "sn", label: "Sénégal", drapeau: "🇸🇳" },
+  { id: "ml", label: "Mali", drapeau: "🇲🇱" },
+  { id: "cm", label: "Cameroun", drapeau: "🇨🇲" },
+  { id: "ma", label: "Maroc", drapeau: "🇲🇦" },
+  { id: "dz", label: "Algérie", drapeau: "🇩🇿" },
+  { id: "gn", label: "Guinée", drapeau: "🇬🇳" },
+  { id: "bj", label: "Bénin", drapeau: "🇧🇯" },
+  { id: "fr", label: "France", drapeau: "🇫🇷" },
+  { id: "be", label: "Belgique", drapeau: "🇧🇪" },
+  { id: "pt", label: "Portugal", drapeau: "🇵🇹" },
+  { id: "es", label: "Espagne", drapeau: "🇪🇸" },
+  { id: "br", label: "Brésil", drapeau: "🇧🇷" },
+  { id: "ar", label: "Argentine", drapeau: "🇦🇷" },
 ];
 
 // ---- Enfance : le point de départ, choisi avant même le début de carrière ----
@@ -65,6 +83,53 @@ export const ENFANCES = [
     label: "Parents qui ont privilégié les études",
     description: "Une tête bien faite et un vrai recul, au prix d'un temps de jeu perdu plus jeune.",
     effets: { mental: 8, technique: -4, reputation: 2 },
+  },
+];
+
+// ---- Adolescence : le mode de vie qui a forgé ta discipline ----
+export const ADOLESCENCES = [
+  {
+    id: "hygiene_pro",
+    label: "Hygiène de pro",
+    description: "Couché tôt, discipline stricte, zéro écart. Tes coéquipiers se moquent, les recruteurs adorent.",
+    effets: { mental: 6, technique: 3, reputation: 3, followers: -300 },
+  },
+  {
+    id: "equilibre",
+    label: "Équilibré",
+    description: "Sérieux à l'entraînement, détendu en dehors. Ni moine, ni fêtard.",
+    effets: { mental: 4, technique: 2, stabilite: 3 },
+  },
+  {
+    id: "belle_vie",
+    label: "La belle vie",
+    description: "Les sorties, les potes, les réseaux. Le talent fera le reste... non ?",
+    effets: { followers: 700, hateRatio: 5, mental: -4, technique: 2 },
+  },
+];
+
+// ---- Entourage : qui gère tes intérêts avant même ton premier contrat ----
+export const ENTOURAGES = [
+  {
+    id: "famille",
+    label: "Famille encadrante",
+    description: "Des parents présents qui gèrent tout : contrats, école, équilibre.",
+    effets: { stabilite: 8, argent: 2000 },
+    agentConfianceInit: 65,
+  },
+  {
+    id: "agent_ambitieux",
+    label: "Agent ambitieux",
+    description: "Un jeune agent aux dents longues t'a repéré. Il promet les sommets — et prend sa part.",
+    effets: { reputation: 4, argent: -1000 },
+    agentConfianceInit: 40,
+  },
+  {
+    id: "bande_quartier",
+    label: "La bande du quartier",
+    description: "Tes amis d'enfance te suivent partout. Fidèles, bruyants, incontrôlables.",
+    effets: { followers: 500, stabilite: 5, hateRatio: 3 },
+    agentConfianceInit: 50,
   },
 ];
 
@@ -187,7 +252,7 @@ export const DECISIONS_SAISON = [
   {
     id: "transfert_grand_club",
     texte: () => `${randomGrandClub()} fait une offre officielle pour te recruter. C'est le grand saut.`,
-    condition: (s) => s.saison === 5 && s.stats.reputation > 35,
+    condition: (s) => s.saison === 5 && s.stats.reputation > 35 && meriteGrosseOffre(s),
     choix: [
       { texte: "Signer, direction le haut niveau", effets: { reputation: 12, argent: 80000, followers: 5000, stabilite: -8 } },
       { texte: "Rester par loyauté envers ton club actuel", effets: { stabilite: 10, reputation: -5 } },
@@ -218,6 +283,16 @@ export const DECISIONS_SAISON = [
     choix: [
       { texte: "Accepter, ouvrir les portes de ta vie", effets: { followers: 6000, argent: 40000, stabilite: -6 } },
       { texte: "Refuser, protéger ton intimité", effets: { stabilite: 6 } },
+    ],
+  },
+  {
+    id: "explosion_saison",
+    texte: (s) => `Ta dernière saison a été exceptionnelle (note moyenne ${derniereNote(s)?.toFixed(1)}/10, ${derniersButs(s)} but(s)). Les plus grands d'Europe s'alignent pour te recruter.`,
+    condition: (s) => s.saison >= 4 && s.saison <= 9 && derniereNote(s) >= 7.6 && s.stats.forme >= 60,
+    choix: [
+      { texte: "Signer chez le prétendant le plus prestigieux", effets: { reputation: 15, argent: 120000, followers: 8000, stabilite: -10 } },
+      { texte: "Prendre ton temps, écouter toutes les offres calmement", effets: { reputation: 8, argent: 60000, stabilite: 2 } },
+      { texte: "Rester fidèle à ton club malgré tout", effets: { stabilite: 12, reputation: -3, followers: 2000 } },
     ],
   },
 
@@ -252,7 +327,7 @@ export const DECISIONS_SAISON = [
   {
     id: "offre_pays_riche",
     texte: () => `Un club aux moyens colossaux venu du Golfe te propose un contrat XXL pour finir ta carrière là-bas, plus tôt que prévu.`,
-    condition: (s) => s.saison >= 11 && s.stats.reputation > 60,
+    condition: (s) => s.saison >= 11 && s.stats.reputation > 60 && s.stats.forme >= 30,
     choix: [
       { texte: "Signer pour la sécurité financière", effets: { argent: 300000, reputation: -6, followers: -2000 } },
       { texte: "Refuser, rester compétitif au plus haut niveau", effets: { reputation: 8, stabilite: -3 } },
@@ -532,13 +607,33 @@ function randomGrandClub() {
   return GRANDS_CLUBS[Math.floor(Math.random() * GRANDS_CLUBS.length)];
 }
 
+// ---- Aides pour lier les offres de transfert à la forme et aux perfs réelles ----
+function derniereNote(s) {
+  const arr = s.historique.statistiquesParSaison;
+  return arr.length > 0 ? arr[arr.length - 1].note : null;
+}
+function derniersButs(s) {
+  const arr = s.historique.statistiquesParSaison;
+  return arr.length > 0 ? arr[arr.length - 1].buts : 0;
+}
+// Un gros club ne vient chercher que les joueurs en forme ET performants la saison passée
+function meriteGrosseOffre(s, seuilNote = 6.2) {
+  const note = derniereNote(s);
+  return s.stats.forme >= 55 && (note === null || note >= seuilNote);
+}
+
 // ============================================================
 // ÉVÉNEMENTS PONCTUELS (aléatoires, se déclenchent en cours de saison)
 // ============================================================
 export const EVENEMENTS_PONCTUELS = [
   {
     id: "rumeur_transfert",
-    probabilite: (s) => 0.22 + s.stats.reputation / 350,
+    probabilite: (s) => {
+      const note = derniereNote(s);
+      const bonusPerf = note !== null ? (note - 6) * 0.05 : 0;
+      const malusForme = s.stats.forme < 45 ? -0.1 : 0;
+      return Math.max(0, 0.15 + s.stats.reputation / 400 + bonusPerf + malusForme);
+    },
     texte: () => `Une rumeur de transfert vers un club prestigieux enfle sur les réseaux.`,
     journaliste: "insider",
     newsTexte: (nom) => `${nom} suivi de près par plusieurs recruteurs européens. Dossier à suivre.`,
